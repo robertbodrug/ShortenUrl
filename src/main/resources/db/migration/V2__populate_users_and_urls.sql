@@ -1,0 +1,11 @@
+INSERT INTO users (username, password, role) VALUES
+        ('user1', '{noop}user1', 'USER'),
+        ('user2', '{noop}user2', 'USER'),
+        ('admin1', '{noop}admin1', 'ADMIN'),
+        ('user3', '{noop}user3', 'USER');
+
+INSERT INTO urls ( short_url, long_url, score, is_active, username) VALUES
+        ( 'http://short.url/abc', 'http://very-long-url.com/this-is-a-very-long-url', 100, TRUE, 'user1'),
+        ( 'http://short.url/def', 'http://another-long-url.com/this-is-another-long-url', 50, TRUE, 'user2'),
+        ( 'http://short.url/ghi', 'http://yet-another-long-url.com/this-is-yet-another-long-url', 75, TRUE, 'admin1'),
+        ( 'http://short.url/jkl', 'http://short-url.com/short-url', 25, FALSE, 'guest1');

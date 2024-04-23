@@ -1,0 +1,15 @@
+CREATE TABLE  IF NOT EXISTS users (
+        username VARCHAR(50) PRIMARY KEY,
+        password TEXT NOT NULL,
+        role VARCHAR NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS urls (
+        id BIGINT AUTO_INCREMENT ,
+        short_url VARCHAR(2048) NOT NULL,
+        long_url VARCHAR(2048) NOT NULL,
+        score INT NOT NULL,
+        is_active BOOLEAN NOT NULL,
+        username VARCHAR(50) NOT NULL,
+        PRIMARY KEY(id)
+);
