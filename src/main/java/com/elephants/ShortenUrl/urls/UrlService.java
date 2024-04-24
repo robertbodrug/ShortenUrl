@@ -1,15 +1,21 @@
 package com.elephants.ShortenUrl.urls;
 
 
-import com.elephants.ShortenUrl.urls.request_response.*;
+import com.elephants.ShortenUrl.request_response.*;
+
+import com.elephants.ShortenUrl.users.CustomUserDetailsService;
 import com.elephants.ShortenUrl.users.UserEntity;
+import com.elephants.ShortenUrl.users.UserRepository;
+import com.elephants.ShortenUrl.users.UserRole;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
@@ -17,55 +23,48 @@ import java.util.Random;
 @Service
 @RequiredArgsConstructor
 public class UrlService {
-    //private final UserService userService;
+    private final UserRepository userRepository;
     private final UrlRepository repository;
-    private Long idNum = 5L; // should be destroyed when second migration will be deleted
 
-    public UrlCreateResponse create(/*String id,*/ UrlCreateRequest request) {
+    public UrlCreateResponse create(String username, UrlCreateRequest request) {
         Optional<UrlCreateResponse.Error> validationError = validateCreateFields(request);
 
         if (validationError.isPresent()) {
             return UrlCreateResponse.failed(validationError.get());
         }
 
-        //UserEntity user = userService.findByUsername(id);
-        String id = "user1"; // created for test, when security task will finish, this line should be destroyed
-       // UserEntity user = userService.findByUsername(id);
-        UserEntity user = new UserEntity("user1","rerer");
-
         UrlEntity createdUrl = repository.save(UrlEntity.builder()
-                .id(idNum++)
-                .user(user)
+                .userId(userRepository.findIdByUsername(username))
                 .shortUrl(generateShortUrl())
                 .longUrl(request.getLongUrl())
                 .score(0L)
                 .isActive(true)
                 .build());
-
+        log.info(createdUrl.getLongUrl()+" is created");
         return UrlCreateResponse.success(createdUrl.getId(), createdUrl.getShortUrl());
     }
 
-    public UrlGetResponse get(/*String username,*/ Long id) {
+    public UrlGetResponse get(String username, Long id) {
         Optional<UrlEntity> optionalUrl = repository.findById(id);
 
         if (optionalUrl.isEmpty()) {
             return UrlGetResponse.failed(UrlGetResponse.Error.INVALID_URL_ID);
         }
-
-        /*boolean isNotUserUrl = isNotUserNote(username, url);
+        UrlEntity url = optionalUrl.get();
+        boolean isNotUserUrl = isNotUserUrl(username, url);
 
         if (isNotUserUrl) {
-            return UrlDeleteResponse.failed(UrlDeleteResponse.Error.INSUFFICIENT_PRIVILEGES);
-        }*/
+            return UrlGetResponse.failed(UrlGetResponse.Error.NO_RIGHTS);
+        }
 
-        UrlEntity url = optionalUrl.get();
+
 
         repository.findById(url.getId());
-
+        log.info(url.getShortUrl()+" is find");
         return UrlGetResponse.success(url);
     }
 
-    public UrlUpdateResponse update(/*String username,*/ UrlUpdateRequest request) {
+    public UrlUpdateResponse update(String username, UrlUpdateRequest request) {
         Optional<UrlEntity> optionalNote = repository.findById(request.getId());
 
         if (optionalNote.isEmpty()) {
@@ -74,17 +73,11 @@ public class UrlService {
 
         UrlEntity url = optionalNote.get();
 
-        /*boolean isNotUserUrl = isNotUserUrl(username, url);
-
-        if (isNotUserUrl) {
-            return UrlUpdateResponse.failed(UrlUpdateResponse.Error.INSUFFICIENT_PRIVILEGES);
-        }*/
-
-        Optional<UrlUpdateResponse.Error> validationError = validateUpdateFields(request);
-
-        if (validationError.isPresent()) {
-            return UrlUpdateResponse.failed(validationError.get());
+        if (isNotUserUrl(username, url)) {
+            return UrlUpdateResponse.failed(UrlUpdateResponse.Error.NO_RIGHTS);
         }
+
+
 
         url.setShortUrl(request.getShortUrl());
         url.setIsActive(true);
@@ -94,7 +87,7 @@ public class UrlService {
         return UrlUpdateResponse.success(url);
     }
 
-    public UrlDeleteResponse delete(/*String username,*/ long id) {
+    public UrlDeleteResponse delete(String username, long id) {
         Optional<UrlEntity> optionalNote = repository.findById(id);
 
         if (optionalNote.isEmpty()) {
@@ -103,11 +96,11 @@ public class UrlService {
 
         UrlEntity url = optionalNote.get();
 
-        /*boolean isNotUserUrl = isNotUserNote(username, url);
+        boolean isNotUserUrl = isNotUserUrl(username, url);
 
         if (isNotUserUrl) {
-            return UrlDeleteResponse.failed(UrlDeleteResponse.Error.INSUFFICIENT_PRIVILEGES);
-        }*/
+            return UrlDeleteResponse.failed(UrlDeleteResponse.Error.NO_RIGHTS);
+        }
 
         repository.delete(url);
 
@@ -153,26 +146,8 @@ public class UrlService {
         return Optional.empty();
     }
 
-    public Optional<UrlUpdateResponse.Error> validateUpdateFields(UrlUpdateRequest request) {
-        try {
-//            URL link = new URL(request.getShortUrl());
-//            HttpURLConnection connection = (HttpURLConnection) link.openConnection();
-//            connection.setRequestMethod("GET");
-//            connection.setConnectTimeout(5000);
-            int responseCode = 220;
-            if(!(responseCode >= 200 && responseCode < 300)){
-                return Optional.of(UrlUpdateResponse.Error.INVALID_LONG_URL);
-            }
-        } catch (Exception e) {
-            return Optional.of(UrlUpdateResponse.Error.INVALID_LONG_URL);
-        }
-        if (Objects.isNull(request.getShortUrl())) {
-            return Optional.of(UrlUpdateResponse.Error.INVALID_LONG_URL);
-        }
-        return Optional.empty();
-    }
 
-//    private boolean isNotUserUrl(String username, UrlEntity url) {
-//        return !url.getUser().getUsername().equals(username);
-//    }
+    private boolean isNotUserUrl(String username, UrlEntity url) {
+        return !Objects.equals(url.getUserId(), userRepository.findIdByUsername(username));
+    }
 }

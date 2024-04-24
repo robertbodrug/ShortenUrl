@@ -1,10 +1,15 @@
-package com.elephants.ShortenUrl.urls.request_response;
+package com.elephants.ShortenUrl.request_response;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
+
+import lombok.AllArgsConstructor;
+        import lombok.Getter;
+        import lombok.Setter;
 @Builder
-@Data
+@AllArgsConstructor
+@Getter
+@Setter
 public class UrlCreateResponse {
     private Error error;
     private Long id;
@@ -13,6 +18,7 @@ public class UrlCreateResponse {
     public enum Error {
         OK,
         INVALID_LONG_URL
+
     }
 
     public static UrlCreateResponse success(Long id,String createdShortUrl) {

@@ -1,11 +1,11 @@
 INSERT INTO users (username, password, role) VALUES
-        ('user1', '{noop}user1', 'USER'),
+        ('user1', '$2a$10$elToPQ8V884EnSrMGUKppuzO19LUwFASYSbCs0f3P.M8Bm0yi0HsO', 'USER'),
         ('user2', '{noop}user2', 'USER'),
-        ('admin1', '{noop}admin1', 'ADMIN'),
+        ('admin1', '$2a$10$qXdVJNGaMQPjcNIryf4lh.xtyPeyvVGOdW9v3jTwzHbLMZb7uMF4y', 'ADMIN'),
         ('user3', '{noop}user3', 'USER');
 
-INSERT INTO urls ( short_url, long_url, score, is_active, username) VALUES
-        ( 'http://short.url/abc', 'http://very-long-url.com/this-is-a-very-long-url', 100, TRUE, 'user1'),
-        ( 'http://short.url/def', 'http://another-long-url.com/this-is-another-long-url', 50, TRUE, 'user2'),
-        ( 'http://short.url/ghi', 'http://yet-another-long-url.com/this-is-yet-another-long-url', 75, TRUE, 'admin1'),
-        ( 'http://short.url/jkl', 'http://short-url.com/short-url', 25, FALSE, 'guest1');
+INSERT INTO urls ( short_url, long_url, score, is_active, user_id) VALUES
+        ( 'abc', 'https://github.com', 100, TRUE, 1),
+        ( 'def', 'https://google.com', 50, TRUE, 2),
+        ( 'ghi', 'http://yet-another-long-url.com/this-is-yet-another-long-url', 75, TRUE, 2),
+        ( 'jkl', 'http://short-url.com/short-url', 25, FALSE, 3);

@@ -1,4 +1,4 @@
-package com.elephants.ShortenUrl.urls.request_response;
+package com.elephants.ShortenUrl.request_response;
 
 import lombok.Builder;
 import lombok.Data;
@@ -10,8 +10,8 @@ public class UrlDeleteResponse {
 
     public enum Error {
         OK,
-        INSUFFICIENT_PRIVILEGES,
-        INVALID_URL_ID
+        INVALID_URL_ID,
+        NO_RIGHTS
     }
 
     public static UrlDeleteResponse success() {

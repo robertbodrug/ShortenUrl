@@ -17,6 +17,15 @@ import java.util.List;
 @AllArgsConstructor
 public class UserEntity {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    public UserEntity(String username, String password, UserRole role) {
+        this.username = username;
+        this.password = password;
+        this.role = role;
+    }
+
     @Column(name = "username", nullable = false, length = 50)
     private String username;
 
@@ -30,6 +39,6 @@ public class UserEntity {
         this.username = username;
         this.password = password;
     }
-    @OneToMany(mappedBy="user",cascade = CascadeType.ALL)
-    private List<UrlEntity> urls;
+//    @OneToMany(mappedBy="user",cascade = CascadeType.ALL)
+//    private List<UrlEntity> urls;
 }

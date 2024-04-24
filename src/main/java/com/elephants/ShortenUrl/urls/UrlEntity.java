@@ -1,6 +1,7 @@
 package com.elephants.ShortenUrl.urls;
 
 import com.elephants.ShortenUrl.users.UserEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,7 +31,12 @@ public class UrlEntity {
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;
 
-    @ManyToOne
-    @JoinColumn(name="username", referencedColumnName = "username", nullable=false)
-    private UserEntity user;
+//    @JsonIgnore
+//    @ManyToOne
+//    @JoinColumn(name="user_id", referencedColumnName = "id")
+//    private UserEntity user;
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
+
+
 }

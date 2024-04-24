@@ -1,4 +1,4 @@
-package com.elephants.ShortenUrl.urls.request_response;
+package com.elephants.ShortenUrl.request_response;
 
 import com.elephants.ShortenUrl.urls.UrlEntity;
 import lombok.Builder;
@@ -17,7 +17,8 @@ public class UrlGetResponse {
 
     public enum Error {
         OK,
-        INVALID_URL_ID
+        INVALID_URL_ID,
+        NO_RIGHTS
     }
 
     public static UrlGetResponse success(UrlEntity url) {

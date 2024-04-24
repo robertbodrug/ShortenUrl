@@ -1,4 +1,4 @@
-package com.elephants.ShortenUrl.urls.request_response;
+package com.elephants.ShortenUrl.request_response;
 
 import lombok.Data;
 

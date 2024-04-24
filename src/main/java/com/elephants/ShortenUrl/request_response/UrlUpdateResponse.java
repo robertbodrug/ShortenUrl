@@ -1,4 +1,4 @@
-package com.elephants.ShortenUrl.urls.request_response;
+package com.elephants.ShortenUrl.request_response;
 
 import com.elephants.ShortenUrl.urls.UrlEntity;
 import lombok.Builder;
@@ -15,9 +15,9 @@ public class UrlUpdateResponse {
 
     public enum Error {
         OK,
-        INSUFFICIENT_PRIVILEGES,
         INVALID_URL_ID,
-        INVALID_LONG_URL
+        INVALID_LONG_URL,
+        NO_RIGHTS
     }
 
     public static UrlUpdateResponse success(UrlEntity updatedNote) {
