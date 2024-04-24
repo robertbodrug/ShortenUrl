@@ -3,19 +3,23 @@ package com.elephants.ShortenUrl.users.auth;
 import com.elephants.ShortenUrl.users.UserEntity;
 import io.jsonwebtoken.*;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
+@Slf4j
 @Component
 public class JwtUtil {
+    @Value("")
+    private String jwtSecret;
 
+    @Value("${demo.app.jwtExpirationMs}")
+    private int jwtExpirationMs;
 
-    private final String secret_key = "=============shorturl===shorturl====================";
-    private long accessTokenValidity = 60*60*1000;
 
     private final JwtParser jwtParser;
 
@@ -23,7 +27,7 @@ public class JwtUtil {
     private final String TOKEN_PREFIX = "Bearer ";
 
     public JwtUtil(){
-        this.jwtParser = Jwts.parser().setSigningKey(secret_key).build();
+        this.jwtParser = Jwts.parser().setSigningKey(jwtSecret).build();
     }
 
     public String createToken(UserEntity user) {
@@ -33,11 +37,11 @@ public class JwtUtil {
                 .add("role",user.getRole())
                 .build();
         Date tokenCreateTime = new Date();
-        Date tokenValidity = new Date(tokenCreateTime.getTime() + TimeUnit.MINUTES.toMillis(accessTokenValidity));
+        Date tokenValidity = new Date(tokenCreateTime.getTime() + TimeUnit.MINUTES.toMillis(jwtExpirationMs));
         return Jwts.builder()
                 .claims(claims)
                 .expiration(tokenValidity)
-                .signWith(SignatureAlgorithm.HS256, secret_key)
+                .signWith(SignatureAlgorithm.HS256, jwtSecret)
                 .compact();
     }
 
